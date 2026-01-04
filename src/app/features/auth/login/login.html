@@ -1,0 +1,40 @@
+<app-auth-layout title="Bienvenido" subtitle="Gestiona tus inversiones">
+  <!-- Login Card -->
+  <app-layout-card>
+    <!-- Error Alert -->
+    <app-feedback-alert [error]="authStore.error()" (closeAlert)="authStore.clearError()" />
+
+    <!-- Login Form -->
+    <form (submit.prevent)="onSubmit()" novalidate>
+      <!-- Email -->
+      <app-text-input
+        label="Correo electrónico"
+        placeholder="tu@email.com"
+        [field]="loginForm.email"
+        fieldType="email"
+      />
+
+      <!-- Password -->
+      <app-password label="Contraseña" placeholder="••••••••" [field]="loginForm.password" />
+
+      <!-- Submit Button -->
+      <app-loading-button
+        [isLoading]="isSubmitting"
+        buttonText="Iniciar sesión"
+        loadingText="Iniciando sesión..."
+        buttonType="submit"
+        [disabled]="isInvalid || isSubmitting"
+      />
+    </form>
+
+    <!-- Divider -->
+    <app-divider />
+
+    <!-- Register Link -->
+    <app-auth-footer
+      [text]="'¿No tienes cuenta?'"
+      [linkText]="'Regístrate aquí'"
+      [redirectTo]="'/register'"
+    />
+  </app-layout-card>
+</app-auth-layout>
