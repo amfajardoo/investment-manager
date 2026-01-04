@@ -1,59 +1,77 @@
 # InvestmentManager
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+A frontend Angular application (generated with Angular CLI v21.x) used to manage investment simulations and user flows.
 
-## Development server
+## Quick start
 
-To start a local development server, run:
+1. Install dependencies:
 
 ```bash
+npm install
+```
+
+2. Start the development server:
+
+```bash
+npm start
+# or
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open http://localhost:4200/ in your browser — the app reloads automatically on code changes.
 
-## Code scaffolding
+Note: this workspace includes VS Code tasks for `start` and `test` (see `.vscode/tasks.json` if you use the editor tasks runner).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Project scripts
 
-```bash
-ng generate component component-name
-```
+- `npm start` — runs the dev server (ng serve)
+- `npm test` — runs unit tests (Vitest)
+- `npm run build` — production build (ng build)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Use the corresponding `ng` commands directly if you prefer the Angular CLI.
 
-```bash
-ng generate --help
-```
+## Tests
 
-## Building
-
-To build the project run:
+Run unit tests with:
 
 ```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
+npm test
+# or
 ng test
 ```
 
-## Running end-to-end tests
+This project is configured to use Vitest for unit testing.
 
-For end-to-end (e2e) testing, run:
+## Building for production
 
 ```bash
-ng e2e
+npm run build
+# or
+ng build --configuration production
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Build artifacts are output to the `dist/` directory.
 
-## Additional Resources
+## Repository structure
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `src/` — application source
+	- `src/main.ts` — app entry
+	- `src/app/` — application modules, components, features
+		- `core/` — services, stores, models, guards
+		- `features/` — feature areas (auth, dashboard)
+		- `components/` — reusable UI components
+	- `src/environments/` — environment configs
+
+## Notable files
+
+- The app root is in `src/app`.
+- Environment settings: `src/environments/environment.ts` and `src/environments/environment.development.ts`.
+
+## Contributing
+
+To add components or services, prefer Angular CLI schematics (e.g., `ng generate component`, `ng generate service`) so files and tests are scaffolded consistently.
+
+## References
+
+- Angular CLI: https://angular.dev/cli
+- Vitest: https://vitest.dev/
