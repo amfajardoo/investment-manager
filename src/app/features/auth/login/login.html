@@ -1,4 +1,4 @@
-<app-auth-layout title="Bienvenido" subtitle="Gestiona tus inversiones">
+<app-auth-layout [title]="'login.title'" [subtitle]="'login.subtitle'">
   <!-- Login Card -->
   <app-layout-card>
     <!-- Error Alert -->
@@ -8,20 +8,26 @@
     <form (submit.prevent)="onSubmit()" novalidate>
       <!-- Email -->
       <app-text-input
-        label="Correo electrónico"
-        placeholder="tu@email.com"
+        fieldId="email"
+        [label]="'login.email'"
+        [placeholder]="'login.emailPlaceholder'"
         [field]="loginForm.email"
         fieldType="email"
       />
 
       <!-- Password -->
-      <app-password label="Contraseña" placeholder="••••••••" [field]="loginForm.password" />
+      <app-password
+        fieldId="password"
+        [label]="'login.password'"
+        [placeholder]="'login.passwordPlaceholder'"
+        [field]="loginForm.password"
+      />
 
       <!-- Submit Button -->
       <app-loading-button
         [isLoading]="isSubmitting"
-        buttonText="Iniciar sesión"
-        loadingText="Iniciando sesión..."
+        [buttonText]="'login.submit'"
+        [loadingText]="'login.loading'"
         buttonType="submit"
         [disabled]="isInvalid || isSubmitting"
       />
@@ -32,8 +38,8 @@
 
     <!-- Register Link -->
     <app-auth-footer
-      [text]="'¿No tienes cuenta?'"
-      [linkText]="'Regístrate aquí'"
+      [text]="'login.noAccount'"
+      [linkText]="'login.register'"
       [redirectTo]="'/register'"
     />
   </app-layout-card>

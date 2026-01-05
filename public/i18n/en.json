@@ -1,0 +1,59 @@
+{
+  "authErrors": {
+    "auth/email-already-in-use": "This email is already registered",
+    "auth/invalid-email": "Invalid email address",
+    "auth/operation-not-allowed": "Operation not allowed",
+    "auth/weak-password": "The password is too weak",
+    "auth/user-disabled": "The user has been disabled",
+    "auth/user-not-found": "User not found",
+    "auth/wrong-password": "Incorrect password",
+    "auth/invalid-credential": "Invalid credentials",
+    "auth/popup-closed-by-user": "The popup was closed by the user",
+    "auth/cancelled-popup-request": "Popup request was cancelled",
+    "unknown": "An unknown error occurred"
+  },
+  "login": {
+    "title": "Welcome",
+    "subtitle": "Manage your investments",
+    "error": "Error signing in",
+    "email": "Email",
+    "emailPlaceholder": "example@hotmail.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "submit": "Sign in",
+    "loading": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "register": "Sign up here"
+  },
+  "loginWithGoogle": {
+    "error": "Error signing in with Google"
+  },
+  "register": {
+    "error": "Error creating account",
+    "title": "Create an account",
+    "subtitle": "Start managing your investments",
+    "displayName": "Full name",
+    "displayNamePlaceholder": "Your full name",
+    "email": "Email",
+    "emailPlaceholder": "example@hotmail.com",
+    "password": "Password",
+    "passwordPlaceholder": "Create a password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Repeat your password",
+    "submit": "Sign up",
+    "loading": "Creating account...",
+    "haveAccount": "Already have an account?",
+    "login": "Sign in here"
+  },
+  "loadUserProfile": {
+    "error": "Error loading user profile"
+  },
+  "logout": {
+    "error": "Error signing out"
+  },
+  "authLayout": {
+    "footer": {
+      "text": "By continuing, you agree to our Terms of Service and Privacy Policy"
+    }
+  }
+}

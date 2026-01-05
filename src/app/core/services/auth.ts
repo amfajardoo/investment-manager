@@ -133,8 +133,7 @@ export class Authentication {
       }
 
       return null;
-    } catch (error) {
-      console.error('Error getting user profile:', error);
+    } catch (_) {
       return null;
     }
   }

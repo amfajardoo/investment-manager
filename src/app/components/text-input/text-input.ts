@@ -1,9 +1,10 @@
 import { Component, effect, input, model } from '@angular/core';
 import type { FormValueControl, ValidationError, WithOptionalField } from '@angular/forms/signals';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-text-input',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './text-input.html',
   styleUrl: './text-input.css',
 })
@@ -16,6 +17,7 @@ export class TextInput implements FormValueControl<string> {
   readonly invalid = input<boolean>(false);
 
   readonly fieldType = input<'text' | 'email'>('text');
+  readonly fieldId = input.required<string>();
   readonly label = input.required<string>();
   readonly placeholder = input<string>('');
   readonly inputClasses = input<string>('');

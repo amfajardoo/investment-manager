@@ -1,8 +1,9 @@
 import { Component, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-loading-button',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './loading-button.html',
   styleUrl: './loading-button.css',
 })

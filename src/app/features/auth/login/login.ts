@@ -56,13 +56,13 @@ export default class Login {
           errors.push({
             fieldTree: form.email,
             kind: 'firebaseAuth',
-            message: result.error.message,
+            message: `authErrors.${result.error?.code}`,
           });
         } else if (result.error.field === 'password') {
           errors.push({
             fieldTree: form.password,
             kind: 'firebaseAuth',
-            message: result.error.message,
+            message: `authErrors.${result.error?.code}`,
           });
         }
         // If field is 'general', the error is already shown via authStore.error()

@@ -1,4 +1,4 @@
-<app-auth-layout title="Crear cuenta" subtitle="Comienza a gestionar tus inversiones">
+<app-auth-layout [title]="'register.title'" [subtitle]="'register.subtitle'">
   <!-- Register Card -->
   <app-layout-card>
     <!-- Error Alert -->
@@ -8,34 +8,42 @@
     <form (submit.prevent)="onSubmit()" novalidate>
       <!-- Name -->
       <app-text-input
-        label="Nombre completo"
-        placeholder="Nombre completo"
+        fieldId="displayName"
+        [label]="'register.displayName'"
+        [placeholder]="'register.displayNamePlaceholder'"
         [field]="registerForm.displayName"
       />
 
       <!-- Email -->
       <app-text-input
-        label="Correo electrónico"
-        placeholder="tu@email.com"
+        fieldId="email"
+        [label]="'register.email'"
+        [placeholder]="'register.emailPlaceholder'"
         [field]="registerForm.email"
         fieldType="email"
       />
 
       <!-- Password -->
-      <app-password label="Contraseña" placeholder="••••••••" [field]="registerForm.password" />
+      <app-password
+        fieldId="password"
+        [label]="'register.password'"
+        [placeholder]="'register.passwordPlaceholder'"
+        [field]="registerForm.password"
+      />
 
       <!-- Confirm Password -->
       <app-password
-        label="Confirmar contraseña"
-        placeholder="••••••••"
+        fieldId="confirmPassword"
+        [label]="'register.confirmPassword'"
+        [placeholder]="'register.confirmPasswordPlaceholder'"
         [field]="registerForm.confirmPassword"
       />
 
       <!-- Submit Button -->
       <app-loading-button
         [isLoading]="isSubmitting"
-        buttonText="Crear cuenta"
-        loadingText="Creando cuenta..."
+        [buttonText]="'register.submit'"
+        [loadingText]="'register.loading'"
         buttonType="submit"
         [disabled]="isInvalid || isSubmitting"
       />
@@ -46,8 +54,8 @@
 
     <!-- Login Link -->
     <app-auth-footer
-      [text]="'¿Ya tienes una cuenta?'"
-      [linkText]="'Inicia sesión aquí'"
+      [text]="'register.haveAccount'"
+      [linkText]="'register.login'"
       [redirectTo]="'/login'"
     />
   </app-layout-card>

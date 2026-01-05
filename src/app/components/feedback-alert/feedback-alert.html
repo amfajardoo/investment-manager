@@ -13,7 +13,7 @@
         />
       </svg>
       <div class="flex-1">
-        <p class="text-sm font-medium text-red-800">{{ error() }}</p>
+        <p class="text-sm font-medium text-red-800">{{ error() | transloco }}</p>
       </div>
       <button (click)="closeAlert.emit()" class="ml-3 text-red-600 hover:text-red-800">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

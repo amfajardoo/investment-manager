@@ -1,5 +1,4 @@
-import { computed, Injector, inject } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
+import { computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   patchState,
@@ -9,8 +8,9 @@ import {
   withProps,
   withState,
 } from '@ngrx/signals';
-import type { AuthErrorResult, AuthResult, UserProfile } from '../models';
+import type { AuthResult, UserProfile } from '../models';
 import { Authentication } from '../services';
+import { I18n } from '../services/i18n';
 
 export interface AuthState {
   user: UserProfile | null;
@@ -32,17 +32,19 @@ export const AuthStore = signalStore(
   withState(initialState),
 
   withProps(() => ({
-    fireAuth: inject(Auth),
     authentication: inject(Authentication),
     router: inject(Router),
-    injector: inject(Injector),
+    i18n: inject(I18n),
   })),
 
-  withComputed(({ isAuthenticated }) => ({
+  withComputed(({ isAuthenticated, user }) => ({
     isLoggedIn: computed(() => isAuthenticated()),
+    userDisplayName: computed(() => user()?.displayName ?? ''),
+    userEmail: computed(() => user()?.email ?? ''),
   })),
 
   withMethods((store) => ({
+    // Estado centralizado
     setUser(user: UserProfile | null): void {
       patchState(store, {
         user,
@@ -52,54 +54,18 @@ export const AuthStore = signalStore(
       });
     },
 
-    // Internal: Set loading state
     setLoading(isLoading: boolean): void {
       patchState(store, { isLoading });
     },
 
-    // Internal: Set error
     setError(error: string): void {
       patchState(store, { error, isLoading: false });
     },
 
-    // Internal: Get error message from Firebase error
-    getErrorMessage(error: unknown): string {
-      const errorCode = (error as { code?: string })?.code || '';
-
-      switch (errorCode) {
-        case 'auth/email-already-in-use':
-          return 'Este correo ya está registrado';
-        case 'auth/invalid-email':
-          return 'Correo electrónico inválido';
-        case 'auth/operation-not-allowed':
-          return 'Operación no permitida';
-        case 'auth/weak-password':
-          return 'La contraseña es muy débil';
-        case 'auth/user-disabled':
-          return 'Esta cuenta ha sido deshabilitada';
-        case 'auth/user-not-found':
-          return 'No existe una cuenta con este correo';
-        case 'auth/wrong-password':
-          return 'Contraseña incorrecta';
-        case 'auth/invalid-credential':
-          return 'Correo o contraseña inválidos';
-        case 'auth/popup-closed-by-user':
-          return 'Ventana de inicio de sesión cerrada';
-        case 'auth/cancelled-popup-request':
-          return 'Inicio de sesión cancelado';
-        default:
-          return (
-            (error as { message?: string })?.message || 'Ocurrió un error durante la autenticación'
-          );
-      }
-    },
-
-    // Clear error
     clearError(): void {
       patchState(store, { error: null });
     },
 
-    // Update user profile
     updateUserProfile(updates: Partial<UserProfile>): void {
       const currentUser = store.user();
       if (currentUser) {
@@ -109,7 +75,6 @@ export const AuthStore = signalStore(
       }
     },
 
-    // Clear user (logout)
     clearUser(): void {
       patchState(store, {
         user: null,
@@ -119,172 +84,166 @@ export const AuthStore = signalStore(
       });
     },
 
-    // clear entire state
     clearState(): void {
       patchState(store, { ...initialState });
     },
   })),
-  withMethods((store) => ({
-    /**
-     * Load user profile from Firestore
-     * Called automatically when Firebase Auth state changes
-     */
-    async loadUserProfile(uid: string): Promise<void> {
-      try {
-        const userProfile = await store.authentication.ensureUserProfile(uid);
 
-        if (userProfile) {
-          store.setUser(userProfile);
-        } else {
-          console.error('Failed to load or create user profile');
-          store.setError('Error al cargar el perfil de usuario');
+  withMethods((store) => {
+    const handleAuthError = (
+      result: AuthResult | undefined | unknown,
+      fallbackKey: string,
+    ): AuthResult => {
+      const errorCode = (result as AuthResult | undefined)?.error?.code;
+      const field = (result as AuthResult | undefined)?.error?.field;
+      const errorMessage = `authErrors.${errorCode}` || fallbackKey;
+      store.setError(errorMessage);
+
+      return {
+        success: false,
+        error: {
+          code: errorCode || 'unknown',
+          field: field || 'general',
+        },
+      };
+    };
+
+    // Helper para navegación post-autenticación
+    const navigateAfterAuth = (path: string = '/dashboard'): void => {
+      store.router.navigate([path]);
+    };
+
+    return {
+      /**
+       * Carga el perfil del usuario desde Firestore
+       * Se llama automáticamente cuando cambia el estado de Firebase Auth
+       */
+      async loadUserProfile(uid: string): Promise<void> {
+        try {
+          const userProfile = await store.authentication.ensureUserProfile(uid);
+
+          if (userProfile) {
+            store.setUser(userProfile);
+          } else {
+            store.setError('loadUserProfile.error');
+          }
+        } catch (error) {
+          console.error('Error loading user profile:', error);
+          store.setError('loadUserProfile.error');
         }
-      } catch (error) {
-        console.error('Error loading profile:', error);
-        store.setError('Error al cargar el perfil de usuario');
-      }
-    },
+      },
 
-    /**
-     * Register new user with email and password
-     */
-    async register(email: string, password: string, displayName: string): Promise<AuthResult> {
-      store.setLoading(true);
-      store.clearError();
+      /**
+       * Registra un nuevo usuario con email y contraseña
+       */
+      async register(email: string, password: string, displayName: string): Promise<AuthResult> {
+        store.setLoading(true);
+        store.clearError();
 
-      try {
-        // Create user in Firebase Auth
-        const authResult = await store.authentication.createUserWithEmail({
-          email,
-          password,
-          displayName,
-        });
+        try {
+          const authResult = await store.authentication.createUserWithEmail({
+            email,
+            password,
+            displayName,
+          });
 
-        if (!authResult.success) {
-          store.setError(authResult.error?.message || 'Error al crear la cuenta');
-          return authResult;
+          if (!authResult.success) {
+            return handleAuthError(authResult, 'register.error');
+          }
+
+          if (authResult.data) {
+            store.setUser(authResult.data as UserProfile);
+          }
+
+          navigateAfterAuth();
+          return { success: true };
+        } catch (error) {
+          return handleAuthError(error, 'register.error');
         }
+      },
 
-        if (authResult.data) {
-          store.setUser(authResult.data as UserProfile);
+      /**
+       * Inicia sesión con email y contraseña
+       */
+      async login(email: string, password: string): Promise<AuthResult> {
+        store.setLoading(true);
+        store.clearError();
+
+        try {
+          const result = await store.authentication.signInWithEmail(email, password);
+
+          if (!result.success) {
+            return handleAuthError(result, 'login.error');
+          }
+
+          if (result.data) {
+            store.setUser(result.data as UserProfile);
+          }
+
+          navigateAfterAuth();
+          return { success: true };
+        } catch (error) {
+          return handleAuthError(error, 'login.error');
         }
+      },
 
-        // Navigation happens after Firebase Auth state change loads profile
-        store.router.navigate(['/dashboard']);
+      /**
+       * Inicia sesión con Google
+       */
+      async loginWithGoogle(): Promise<AuthResult> {
+        store.setLoading(true);
+        store.clearError();
 
-        return { success: true };
-      } catch (error: unknown) {
-        console.error('Registration error:', error);
-        const errorMessage = (error as AuthErrorResult)?.message || 'Error al crear la cuenta';
-        store.setError(errorMessage);
+        try {
+          const result = await store.authentication.signInWithGooglePopup();
 
-        return {
-          success: false,
-          error: { code: 'unknown', message: errorMessage, field: 'general' },
-        };
-      }
-    },
+          if (!result.success) {
+            return handleAuthError(result, 'loginWithGoogle.error');
+          }
 
-    /**
-     * Login with email and password
-     */
-    async login(email: string, password: string): Promise<AuthResult> {
-      store.setLoading(true);
-      store.clearError();
-
-      try {
-        const result = await store.authentication.signInWithEmail(email, password);
-
-        if (!result.success) {
-          store.setError(result.error?.message || 'Error al iniciar sesión');
-          return { success: result.success };
+          navigateAfterAuth();
+          return { success: true };
+        } catch (error) {
+          return handleAuthError(error, 'loginWithGoogle.error');
         }
+      },
 
-        if (result.data) {
-          store.setUser(result.data as UserProfile);
+      /**
+       * Cierra la sesión del usuario actual
+       */
+      async logout(): Promise<void> {
+        store.setLoading(true);
+
+        try {
+          await store.authentication.signOutUser();
+          store.clearState();
+          store.router.navigate(['/login']);
+        } catch (error) {
+          handleAuthError(error, 'logout.error');
+          store.clearState();
+          store.router.navigate(['/login']);
         }
+      },
 
-        // Navigation happens after Firebase Auth state change loads profile
-        store.router.navigate(['/dashboard']);
-
-        return { success: true };
-      } catch (error: unknown) {
-        console.error('Login error:', error);
-        const errorMessage = (error as AuthErrorResult)?.message || 'Error al iniciar sesión';
-        store.setError(errorMessage);
-
-        return {
-          success: false,
-          error: { code: 'unknown', message: errorMessage, field: 'general' },
-        };
-      }
-    },
-
-    /**
-     * Login with Google
-     */
-    async loginWithGoogle(): Promise<AuthResult> {
-      store.setLoading(true);
-      store.clearError();
-
-      try {
-        const result = await store.authentication.signInWithGooglePopup();
-
-        if (!result.success) {
-          store.setError(result.error?.message || 'Error al iniciar sesión con Google');
-          return result;
-        }
-
-        // Navigation happens after Firebase Auth state change loads profile
-        store.router.navigate(['/dashboard']);
-
-        return { success: true };
-      } catch (error: unknown) {
-        console.error('Google login error:', error);
-        const errorMessage =
-          (error as AuthErrorResult)?.message || 'Error al iniciar sesión con Google';
-        store.setError(errorMessage);
-
-        return {
-          success: false,
-          error: { code: 'unknown', message: errorMessage, field: 'general' },
-        };
-      }
-    },
-
-    /**
-     * Logout current user
-     */
-    async logout(): Promise<void> {
-      store.setLoading(true);
-
-      try {
-        await store.authentication.signOutUser();
-        store.clearState();
-        store.router.navigate(['/login']);
-      } catch (error: unknown) {
-        console.error('Logout error:', error);
-        const errorMessage = (error as AuthErrorResult)?.message || 'Error al cerrar sesión';
-        store.setError(errorMessage);
-      }
-    },
-
-    /**
-     * Update user display name
-     */
-    async updateDisplayName(displayName: string): Promise<void> {
-      try {
+      /**
+       * Actualiza el nombre de usuario
+       */
+      async updateDisplayName(displayName: string): Promise<void> {
         const currentUser = store.user();
-        if (!currentUser) throw new Error('No user logged in');
 
-        await store.authentication.updateDisplayName(displayName);
-        await store.authentication.updateUserProfile(currentUser.uid, { displayName });
+        if (!currentUser) {
+          throw new Error('No user logged in');
+        }
 
-        store.updateUserProfile({ displayName });
-      } catch (error: unknown) {
-        console.error('Error updating display name:', error);
-        throw error;
-      }
-    },
-  })),
+        try {
+          await store.authentication.updateDisplayName(displayName);
+          await store.authentication.updateUserProfile(currentUser.uid, { displayName });
+          store.updateUserProfile({ displayName });
+        } catch (error) {
+          console.error('Error updating display name:', error);
+          throw error;
+        }
+      },
+    };
+  }),
 );

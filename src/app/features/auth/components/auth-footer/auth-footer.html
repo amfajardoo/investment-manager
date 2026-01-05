@@ -1,8 +1,8 @@
 <div class="mt-6 text-center">
   <p class="text-gray-600">
-    {{ text() }}
+    {{ text() | transloco }}
     <a [routerLink]="redirectTo()" class="font-semibold text-blue-600 hover:text-blue-700 ml-1">
-      {{ linkText() }}
+      {{ linkText() | transloco }}
     </a>
   </p>
 </div>

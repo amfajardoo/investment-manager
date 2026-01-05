@@ -1,14 +1,12 @@
 <div class="mb-5">
-  <label
-    [for]="'field-' + label().toLowerCase().replace(' ', '-')"
-    class="block text-sm font-medium text-gray-700 mb-2"
-    >{{ label() }}
+  <label [for]="fieldId()" class="block text-sm font-medium text-gray-700 mb-2"
+    >{{ label() | transloco }}
     @if (required()) {
       <span class="text-red-600">*</span>
     }
   </label>
   <input
-    [id]="'field-' + label().toLowerCase().replace(' ', '-')"
+    [id]="fieldId()"
     [type]="fieldType()"
     [value]="value()"
     [disabled]="disabled()"
@@ -17,14 +15,14 @@
       inputClasses()
     "
     [class.border-red-500]="invalid() && touched()"
-    [placeholder]="placeholder()"
+    [placeholder]="placeholder() | transloco"
     autocomplete="on"
     (input)="changeInput($event)"
     (blur)="touched.set(true)"
   />
   @if (touched() && invalid()) {
     @for (error of errors(); track error.message) {
-      <span class="mt-2 text-sm text-red-600">{{ error.message }}</span>
+      <span class="mt-2 text-sm text-red-600">{{ error.message | transloco }}</span>
     }
   }
 </div>

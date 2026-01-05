@@ -1,0 +1,59 @@
+{
+  "authErrors": {
+    "auth/email-already-in-use": "Este correo ya está registrado",
+    "auth/invalid-email": "Correo electrónico inválido",
+    "auth/operation-not-allowed": "Operación no permitida",
+    "auth/weak-password": "La contraseña es muy débil",
+    "auth/user-disabled": "El usuario ha sido deshabilitado",
+    "auth/user-not-found": "Usuario no encontrado",
+    "auth/wrong-password": "Contraseña incorrecta",
+    "auth/invalid-credential": "Credenciales inválidas",
+    "auth/popup-closed-by-user": "La ventana emergente fue cerrada por el usuario",
+    "auth/cancelled-popup-request": "Solicitud de ventana emergente cancelada",
+    "unknown": "Ocurrió un error desconocido"
+  },
+  "login": {
+    "title": "Bienvenido",
+    "subtitle": "Gestiona tus inversiones",
+    "error": "Error al iniciar sesión",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "ejemplo@hotmail.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "submit": "Iniciar sesión",
+    "loading": "Iniciando sesión...",
+    "noAccount": "¿No tienes una cuenta?",
+    "register": "Regístrate aquí"
+  },
+  "loginWithGoogle": {
+    "error": "Error al iniciar sesión con Google"
+  },
+  "register": {
+    "error": "Error al crear la cuenta",
+    "title": "Crea una cuenta",
+    "subtitle": "Comienza a gestionar tus inversiones",
+    "displayName": "Nombre completo",
+    "displayNamePlaceholder": "Tu nombre completo",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "ejemplo@hotmail.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Crea una contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Repite tu contraseña",
+    "submit": "Registrarse",
+    "loading": "Creando cuenta...",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "login": "Inicia sesión aquí"
+  },
+  "loadUserProfile": {
+    "error": "Error al cargar el perfil de usuario"
+  },
+  "logout": {
+    "error": "Error al cerrar sesión"
+  },
+  "authLayout": {
+    "footer": {
+      "text": "Al continuar, aceptas nuestros Términos de Servicio y Política de Privacidad"
+    }
+  }
+}

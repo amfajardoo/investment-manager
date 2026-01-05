@@ -12,11 +12,10 @@ export type AuthErrorCode =
   | 'unknown';
 
 export type AuthErrorField = 'email' | 'password' | 'displayName' | 'general';
-export type AuthErrorResult = { code?: string; message?: string };
+export type AuthErrorResult = { code?: string };
 
 export interface AuthError {
-  code: AuthErrorCode;
-  message: string;
+  code: AuthErrorCode | string;
   field: AuthErrorField;
 }
 
@@ -50,39 +49,8 @@ export function createAuthError(error: unknown): AuthError {
       field = 'general';
   }
 
-  // Get user-friendly message
-  const message = getErrorMessage(errorCode);
-
   return {
     code: errorCode,
-    message,
     field,
   };
-}
-
-function getErrorMessage(code: AuthErrorCode): string {
-  switch (code) {
-    case 'auth/email-already-in-use':
-      return 'Este correo ya está registrado';
-    case 'auth/invalid-email':
-      return 'Correo electrónico inválido';
-    case 'auth/operation-not-allowed':
-      return 'Operación no permitida';
-    case 'auth/weak-password':
-      return 'La contraseña es muy débil';
-    case 'auth/user-disabled':
-      return 'Esta cuenta ha sido deshabilitada';
-    case 'auth/user-not-found':
-      return 'No existe una cuenta con este correo';
-    case 'auth/wrong-password':
-      return 'Contraseña incorrecta';
-    case 'auth/invalid-credential':
-      return 'Correo o contraseña inválidos';
-    case 'auth/popup-closed-by-user':
-      return 'Ventana de inicio de sesión cerrada';
-    case 'auth/cancelled-popup-request':
-      return 'Inicio de sesión cancelado';
-    default:
-      return 'Ocurrió un error durante la autenticación';
-  }
 }

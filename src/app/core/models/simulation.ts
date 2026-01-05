@@ -3,9 +3,11 @@ export interface ReinvestmentSimulation {
   rate: number;
   initialAmount: number;
   strategy: 'simple' | 'compound';
-  projection: {
-    date: Date;
-    value: number;
-    interest: number;
-  }[];
+  projection: Projection[];
+}
+
+export interface Projection {
+  date: Date;
+  value: number;
+  interest: number;
 }

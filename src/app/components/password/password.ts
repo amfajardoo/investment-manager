@@ -1,9 +1,10 @@
 import { Component, effect, input, model, signal } from '@angular/core';
 import type { FormValueControl, ValidationError, WithOptionalField } from '@angular/forms/signals';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-password',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './password.html',
   styleUrl: './password.css',
 })
@@ -15,6 +16,7 @@ export class Password implements FormValueControl<string> {
   readonly touched = model<boolean>(false);
   readonly invalid = input<boolean>(false);
 
+  readonly fieldId = input.required<string>();
   readonly label = input.required<string>();
   readonly placeholder = input<string>('');
   readonly inputClasses = input<string>('');

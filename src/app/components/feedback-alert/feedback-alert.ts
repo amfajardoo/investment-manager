@@ -1,10 +1,11 @@
 import { Component, effect, input, output } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 const FIVE_SECONDS = 5000;
 
 @Component({
   selector: 'app-feedback-alert',
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: './feedback-alert.html',
   styleUrl: './feedback-alert.css',
 })
